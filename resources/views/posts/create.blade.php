@@ -1,74 +1,49 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-@section('content')
+<body class="bg-gray-100">
 
-{{-- Page Header --}}
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h2 class="text-3xl font-bold text-gray-800">Create New Post</h2>
-        <p class="text-gray-500 text-sm mt-1">
-            Write and publish a new article using the Laraberg editor.
-        </p>
-    </div>
+<div class="max-w-3xl mx-auto p-6">
 
-    <a href="{{ route('posts.index') }}"
-       class="text-sm font-medium text-indigo-600 hover:underline">
-        ← Back to Posts
-    </a>
-</div>
+    <h1 class="text-3xl font-bold mb-4">Create Post</h1>
 
+    <form action="{{ route('posts.store') }}" method="POST"
+          class="bg-white p-6 rounded-xl shadow space-y-4">
 
-{{-- Form Card --}}
-<div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-
-    <form action="{{ route('posts.store') }}" method="POST" class="space-y-6">
         @csrf
 
-        {{-- Title Field --}}
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                Post Title
-            </label>
+        <input type="text"
+               name="title"
+               placeholder="Title"
+               class="w-full border p-2 rounded-xl"
+               required>
 
-            <input
-                type="text"
-                name="title"
-                value="{{ old('title') }}"
-                placeholder="Enter your post title..."
-                class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
-                required
-            >
-        </div>
+        <textarea name="content"
+                  class="w-full border p-2 rounded-xl h-40"
+                  placeholder="Content"></textarea>
 
+        <select name="status"
+                class="w-full border p-2 rounded-xl">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+        </select>
 
-        {{-- Content Field --}}
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                Post Content
-            </label>
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded-xl">
+            Publish
+        </button>
 
-            <textarea
-                id="content"
-                name="content"
-                class="w-full min-h-[300px] rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
-            >{{ old('content') }}</textarea>
-        </div>
-
-
-        {{-- Submit Button --}}
-        <div class="flex justify-end">
-            <button
-                type="submit"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition duration-200"
-            >
-                🚀 Publish Post
-            </button>
-        </div>
+        <a href="{{ route('posts.index') }}"
+           class="ml-3 text-gray-600">
+            Cancel
+        </a>
 
     </form>
+
 </div>
 
-{{-- Laraberg Editor --}}
-<!-- @laraberg('content') -->
-
-@endsection
+</body>
+</html>
