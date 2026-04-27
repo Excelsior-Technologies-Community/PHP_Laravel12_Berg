@@ -1,81 +1,48 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-@section('content')
+<body class="bg-gray-100">
 
-{{-- Page Header --}}
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h2 class="text-3xl font-bold text-gray-800">Edit Post</h2>
-        <p class="text-gray-500 text-sm mt-1">
-            Update your article content using the Laraberg editor.
-        </p>
-    </div>
+<div class="max-w-3xl mx-auto p-6">
 
-    <a href="{{ route('posts.index') }}"
-       class="text-sm font-medium text-indigo-600 hover:underline">
-        ← Back to Posts
-    </a>
-</div>
+    <h1 class="text-3xl font-bold mb-4">Edit Post</h1>
 
+    <form action="{{ route('posts.update', $post) }}"
+          method="POST"
+          class="bg-white p-6 rounded-xl shadow space-y-4">
 
-{{-- Form Card --}}
-<div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-
-    <form action="{{ route('posts.update', $post) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
 
-        {{-- Title Field --}}
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                Post Title
-            </label>
+        <input type="text"
+               name="title"
+               value="{{ $post->title }}"
+               class="w-full border p-2 rounded-xl">
 
-            <input
-                type="text"
-                name="title"
-                value="{{ old('title', $post->title) }}"
-                placeholder="Enter your post title..."
-                class="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
-                required
-            >
-        </div>
+        <textarea name="content"
+                  class="w-full border p-2 rounded-xl h-40">{{ $post->content }}</textarea>
 
+        <select name="status"
+                class="w-full border p-2 rounded-xl">
+            <option value="draft" {{ $post->status == 'draft' ? 'selected' : '' }}>
+                Draft
+            </option>
+            <option value="published" {{ $post->status == 'published' ? 'selected' : '' }}>
+                Published
+            </option>
+        </select>
 
-        {{-- Content Field --}}
-        <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                Post Content
-            </label>
-
-            <textarea
-                id="content"
-                name="content"
-                class="w-full min-h-[300px] rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
-            >{{ old('content', $post->content) }}</textarea>
-        </div>
-
-
-        {{-- Action Buttons --}}
-        <div class="flex items-center justify-end gap-3">
-
-            <a href="{{ route('posts.index') }}"
-               class="px-5 py-3 text-sm font-semibold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-                Cancel
-            </a>
-
-            <button
-                type="submit"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition duration-200"
-            >
-                💾 Update Post
-            </button>
-        </div>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-xl">
+            Update
+        </button>
 
     </form>
+
 </div>
 
-{{-- Laraberg Editor --}}
-<!-- @laraberg('content') -->
-
-@endsection
+</body>
+</html>
