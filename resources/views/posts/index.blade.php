@@ -1,98 +1,125 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
+<head>
+    <meta charset="UTF-8">
+    <title>All Posts</title>
 
-{{-- Page Header --}}
-<div class="mb-8 flex items-center justify-between">
-    <div>
-        <h2 class="text-3xl font-bold text-gray-800">All Posts</h2>
-        <p class="text-gray-500 text-sm mt-1">
-            Manage, edit, and view your published articles.
-        </p>
-    </div>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-    <a href="{{ route('posts.create') }}"
-       class="inline-flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow-md hover:bg-indigo-700 transition">
-        + Create Post
-    </a>
-</div>
+<body class="bg-gray-100">
 
-{{-- Posts Table Card --}}
-<div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <div class="max-w-6xl mx-auto p-6">
 
-    @if($posts->count())
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Title
-                    </th>
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-3xl font-bold">All Posts</h1>
+                <p class="text-gray-500">Manage your posts</p>
+            </div>
 
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
-                        Content Preview
-                    </th>
-
-                    <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-
-            <tbody class="divide-y divide-gray-100">
-                @foreach($posts as $post)
-                    <tr class="hover:bg-gray-50 transition">
-                        {{-- Title --}}
-                        <td class="px-6 py-4 font-semibold text-gray-800">
-                            <a href="{{ route('posts.show', $post) }}" class="hover:text-indigo-600 transition">
-                                {{ $post->title }}
-                            </a>
-                        </td>
-
-                        {{-- Content Preview --}}
-                        <td class="px-6 py-4 text-gray-600 text-sm max-w-md">
-                            {{ \Illuminate\Support\Str::limit(strip_tags($post->content), 100) }}
-                        </td>
-
-                        {{-- Actions --}}
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <a href="{{ route('posts.show', $post) }}"
-                               class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
-                                View
-                            </a>
-
-                            <a href="{{ route('posts.edit', $post) }}"
-                               class="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('posts.destroy', $post) }}"
-                                  method="POST"
-                                  class="inline-block"
-                                  onsubmit="return confirm('Are you sure you want to delete this post?')">
-                                @csrf
-                                @method('DELETE')
-
-                                <button type="submit"
-                                        class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    @else
-        <div class="text-center py-16">
-            <p class="text-gray-500 mb-4">No posts found.</p>
-
-            <a href="{{ route('posts.create') }}"
-               class="inline-flex items-center px-5 py-3 bg-indigo-600 text-white text-sm font-semibold rounded-xl shadow hover:bg-indigo-700 transition">
-                Create Your First Post
+            <a href="{{ route('posts.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-xl">
+                + Create Post
             </a>
         </div>
-    @endif
 
-</div>
+        @if(session('success'))
+            <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-xl">
+                {{ session('success') }}
+            </div>
+        @endif
+        <!-- Search -->
+        <form method="GET" class="flex gap-2 mb-4">
+            <input type="text" name="search" class="border p-2 rounded-xl w-full" placeholder="Search posts...">
 
-@endsection
+            <select name="status" class="border p-2 rounded-xl">
+                <option value="">All</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+            </select>
+
+            <button class="bg-black text-white px-4 rounded-xl">
+                Search
+            </button>
+
+            <a href="{{ route('posts.trash') }}" class="bg-red-500 text-white px-4 py-2 rounded-xl">
+                Trash
+            </a>
+        </form>
+
+        <!-- Table -->
+        <div class="bg-white shadow rounded-xl overflow-hidden">
+
+            @if($posts->count())
+
+                <table class="w-full">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-3 text-left">ID</th>
+                            <th class="p-3 text-left">Title</th>
+                            <th class="p-3 text-left">Content</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($posts as $post)
+
+                            <tr class="border-b">
+                                <td class="p-3 font-bold">
+                                    {{ $post->id }}
+                                </td>
+
+
+                                <td class="p-3 font-bold">
+                                    {{ $post->title }}
+                                </td>
+
+                                <td class="p-3 text-gray-600">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($post->content), 80) }}
+                                </td>
+
+                                <td class="p-3 text-right space-x-2">
+
+                                    <a href="{{ route('posts.show', $post) }}" class="bg-blue-500 text-white px-3 py-1 rounded">
+                                        View
+                                    </a>
+
+                                    <a href="{{ route('posts.edit', $post) }}"
+                                        class="bg-indigo-500 text-white px-3 py-1 rounded">
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('posts.destroy', $post) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button class="bg-red-500 text-white px-3 py-1 rounded"
+                                            onclick="return confirm('Delete?')">
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            @else
+                <p class="p-6 text-center text-gray-500">No posts found</p>
+            @endif
+
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $posts->links() }}
+        </div>
+
+    </div>
+
+</body>
+
+</html>
